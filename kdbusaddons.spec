@@ -1,11 +1,11 @@
-%define major 5
+%define major 4
 %define libname %mklibname KF5DBusAddons %{major}
 %define devname %mklibname KF5DBusAddons -d
 %define debug_package %{nil}
 
 Name: kdbusaddons
-Version: 4.95.0
-Release: 2
+Version: 4.96.0
+Release: 1
 Source0: http://ftp5.gwdg.de/pub/linux/kde/unstable/frameworks/4.95.0/%{name}-%{version}.tar.xz
 Summary: The KDE Frameworks 5 D-BUS Add-On library
 URL: http://kde.org/
@@ -17,6 +17,7 @@ BuildRequires: pkgconfig(Qt5Core)
 BuildRequires: pkgconfig(Qt5DBus)
 BuildRequires: pkgconfig(Qt5Test)
 BuildRequires: qmake5
+BuildRequires: ninja
 Requires: %{libname} = %{EVRD}
 Requires: %{apilibname} = %{EVRD}
 
@@ -40,13 +41,15 @@ Development files (Headers etc.) for %{name}.
 
 %prep
 %setup -q
-%cmake
+%cmake -G Ninja
 
 %build
-%make -C build
+ninja -C build
 
 %install
-%makeinstall_std -C build
+DESTDIR=%{buildroot} ninja -C build install
+mkdir -p %{buildroot}%{_libdir}/qt5
+mv %{buildroot}%{_prefix}/mkspecs %{buildroot}%{_libdir}/qt5/
 
 %files -n %{libname}
 %{_libdir}/*.so.%{major}*
@@ -55,3 +58,4 @@ Development files (Headers etc.) for %{name}.
 %{_includedir}/*
 %{_libdir}/*.so
 %{_libdir}/cmake/*
+%{_libdir}/qt5/mkspecs/modules/*
