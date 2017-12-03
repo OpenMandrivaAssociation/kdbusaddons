@@ -1,4 +1,2 @@
-removed_sources:
-  kdbusaddons-5.13.0.tar.xz: 2a8085226ca6344a71aa92917fd5cc9ac97f9823
 sources:
-  kdbusaddons-5.40.0.tar.xz: 744a11e1944c723a9b7c72cca89fbccea7efb26a
+  kdbusaddons-5.41.0.tar.xz: 9279bc52362133ce3d05b37f161ff007f59a1797
