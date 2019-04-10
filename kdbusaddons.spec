@@ -5,8 +5,8 @@
 %define stable %([ "`echo %{version} |cut -d. -f3`" -ge 80 ] && echo -n un; echo -n stable)
 
 Name: kdbusaddons
-Version:	5.56.0
-Release:	2
+Version:	5.57.0
+Release:	1
 Source0: http://download.kde.org/%{stable}/frameworks/%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
 Summary: The KDE Frameworks 5 D-BUS Add-On library
 URL: http://kde.org/
@@ -17,6 +17,13 @@ BuildRequires: pkgconfig(Qt5Core)
 BuildRequires: pkgconfig(Qt5DBus)
 BuildRequires: pkgconfig(Qt5Test)
 BuildRequires: pkgconfig(Qt5X11Extras)
+# For Python bindings
+BuildRequires: cmake(PythonModuleGeneration)
+BuildRequires: pkgconfig(python3)
+BuildRequires: python-qt5-core
+BuildRequires: python-qt5-dbus
+# For QCH format docs
+BuildRequires: qt5-assistant
 Requires: %{libname} = %{EVRD}
 
 %description
@@ -37,8 +44,24 @@ Requires: %{libname} = %{EVRD}
 %description -n %{devname}
 Development files (Headers etc.) for %{name}.
 
+%package -n %{name}-devel-docs
+Summary: Developer documentation for %{name} for use with Qt Assistant
+Group: Documentation
+Suggests: %{devname} = %{EVRD}
+
+%description -n %{name}-devel-docs
+Developer documentation for %{name} for use with Qt Assistant
+
+%package -n python-%{name}
+Summary: Python bindings for %{name}
+Group: System/Libraries
+Requires: %{libname} = %{EVRD}
+
+%description -n python-%{name}
+Python bindings for %{name}
+
 %prep
-%setup -q
+%autosetup -p1
 %cmake_kde5
 
 %build
@@ -55,6 +78,8 @@ for i in .%{_datadir}/locale/*/LC_MESSAGES/*.qm; do
 	echo $i |cut -b2- >>$L
 done
 
+[ -s %{buildroot}%{python_sitearch}/PyKF5/__init__.py ] || rm -f %{buildroot}%{python_sitearch}/PyKF5/__init__.py
+
 %files -f %{name}.lang
 %{_bindir}/kquitapp5
 %{_sysconfdir}/xdg/kdbusaddons.categories
@@ -68,3 +93,12 @@ done
 %{_libdir}/*.so
 %{_libdir}/cmake/*
 %{_libdir}/qt5/mkspecs/modules/*
+
+%files -n %{name}-devel-docs
+%{_docdir}/qt5/*.{tags,qch}
+
+%files -n python-%{name}
+%dir %{python_sitearch}/PyKF5
+%{python_sitearch}/PyKF5/KDBusAddons.so
+%dir %{_datadir}/sip/PyKF5
+%{_datadir}/sip/PyKF5/KDBusAddons
