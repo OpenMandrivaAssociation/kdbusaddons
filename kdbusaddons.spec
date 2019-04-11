@@ -23,6 +23,7 @@ BuildRequires: pkgconfig(python3)
 BuildRequires: python-qt5-core
 BuildRequires: python-qt5-dbus
 # For QCH format docs
+BuildRequires: doxygen
 BuildRequires: qt5-assistant
 Requires: %{libname} = %{EVRD}
 
